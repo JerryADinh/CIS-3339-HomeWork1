@@ -31,57 +31,48 @@ function handleSubmit() {
 
   emit('enroll-student', selectedStudentId.value, selectedCourseId.value, () => {
     selectedStudentId.value = '';
+    selectedCourseId.value = '';
   });
 }
 </script>
 
 <template>
-  <section class="card">
-    <h2 class="card-title">Enroll a Student in a Course</h2>
-    <p v-if="validationError" class="inline-error" role="alert">{{ validationError }}</p>
+  <section class="section-block">
+    <h1>Enroll Student in Course</h1>
+    <p v-if="validationError" class="error-text">{{ validationError }}</p>
 
-    <form class="form-grid" @submit.prevent="handleSubmit" novalidate>
-      <div class="form-group">
-        <label for="enrollStudentSelect">Select Student *</label>
+    <form @submit.prevent="handleSubmit" novalidate>
+      <div class="form-row">
+        <label for="enrollStudentSelect">Select Student: </label>
         <select id="enrollStudentSelect" v-model="selectedStudentId" required>
-          <option value="" disabled>-- Choose a Student --</option>
+          <option value="">-- Select Student --</option>
           <option
             v-for="student in students"
             :key="student._id"
             :value="student._id"
           >
-            {{ student.name }} (ID: {{ student.studentId }})
+            {{ student.name }} ({{ student.studentId }})
           </option>
         </select>
       </div>
 
-      <div class="form-group">
-        <label for="enrollCourseSelect">Select Course *</label>
+      <div class="form-row">
+        <label for="enrollCourseSelect">Select Course: </label>
         <select id="enrollCourseSelect" v-model="selectedCourseId" required>
-          <option value="" disabled>-- Choose a Course --</option>
+          <option value="">-- Select Course --</option>
           <option
             v-for="course in courses"
             :key="course._id"
             :value="course._id"
           >
-            {{ course.courseId }} — {{ course.courseName }}
+            {{ course.courseName }} ({{ course.courseId }})
           </option>
         </select>
       </div>
 
-      <div class="form-actions">
-        <button
-          type="submit"
-          class="btn btn-primary"
-          :disabled="loading || students.length === 0 || courses.length === 0"
-        >
-          {{ loading ? 'Enrolling...' : 'Enroll Student' }}
-        </button>
+      <div class="form-row">
+        <button type="submit" :disabled="loading">Enroll Student</button>
       </div>
     </form>
-
-    <p v-if="students.length === 0 || courses.length === 0" class="helper-note">
-      Note: You must have at least one student and one course created before adding an enrollment.
-    </p>
   </section>
 </template>

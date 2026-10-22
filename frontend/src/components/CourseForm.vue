@@ -23,7 +23,7 @@ function handleSubmit() {
   const courseName = form.courseName.trim();
 
   if (!courseId || !courseName) {
-    validationError.value = 'Both Course ID and Course Name are required.';
+    validationError.value = 'Both Class ID and Class Name are required.';
     return;
   }
 
@@ -35,37 +35,21 @@ function handleSubmit() {
 </script>
 
 <template>
-  <section class="card">
-    <h2 class="card-title">Add a Course</h2>
-    <p v-if="validationError" class="inline-error" role="alert">{{ validationError }}</p>
+  <section class="section-block">
+    <h1>Add a Course</h1>
+    <p v-if="validationError" class="error-text">{{ validationError }}</p>
 
-    <form class="form-grid" @submit.prevent="handleSubmit" novalidate>
-      <div class="form-group">
-        <label for="courseId">Course ID *</label>
-        <input
-          id="courseId"
-          v-model="form.courseId"
-          type="text"
-          placeholder="e.g., CIS 3339"
-          required
-        />
+    <form @submit.prevent="handleSubmit" novalidate>
+      <div class="form-row">
+        <label for="courseId">Class ID: </label>
+        <input id="courseId" v-model="form.courseId" type="text" required />
       </div>
-
-      <div class="form-group">
-        <label for="courseName">Course Name *</label>
-        <input
-          id="courseName"
-          v-model="form.courseName"
-          type="text"
-          placeholder="e.g., Enterprise Applications Development"
-          required
-        />
+      <div class="form-row">
+        <label for="courseName">Class Name: </label>
+        <input id="courseName" v-model="form.courseName" type="text" required />
       </div>
-
-      <div class="form-actions">
-        <button type="submit" class="btn btn-primary" :disabled="loading">
-          {{ loading ? 'Saving...' : 'Add Course' }}
-        </button>
+      <div class="form-row">
+        <button type="submit" :disabled="loading">Add Course</button>
       </div>
     </form>
   </section>

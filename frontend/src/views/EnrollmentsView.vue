@@ -22,10 +22,10 @@ onMounted(async () => {
   }
 });
 
-async function handleEnrollStudent(studentId, courseId, resetStudentSelect) {
+async function handleEnrollStudent(studentId, courseId, resetForm) {
   const ok = await enrollmentStore.enrollStudent(studentId, courseId);
   if (ok) {
-    resetStudentSelect();
+    resetForm();
   }
 }
 
@@ -35,12 +35,7 @@ async function handleSelectCourse(courseId) {
 </script>
 
 <template>
-  <div class="view-container">
-    <div class="page-header">
-      <h1>Enrollment Management</h1>
-      <p>Enroll students in courses and inspect course rosters.</p>
-    </div>
-
+  <div>
     <StatusAlert
       :error="enrollmentStore.error"
       :success="enrollmentStore.successMessage"
@@ -57,7 +52,6 @@ async function handleSelectCourse(courseId) {
     <CourseRoster
       :courses="courseStore.courses"
       :selected-course-id="enrollmentStore.selectedCourseId"
-      :selected-course="enrollmentStore.selectedCourse"
       :roster-students="enrollmentStore.rosterStudents"
       :loading="enrollmentStore.loading"
       @select-course="handleSelectCourse"

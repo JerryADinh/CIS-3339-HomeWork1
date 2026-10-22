@@ -1,5 +1,7 @@
 <script setup>
-defineProps({
+import { ref, watch } from 'vue';
+
+const props = defineProps({
   courses: {
     type: Array,
     required: true
@@ -7,10 +9,6 @@ defineProps({
   selectedCourseId: {
     type: String,
     default: ''
-  },
-  selectedCourse: {
-    type: Object,
-    default: null
   },
   rosterStudents: {
     type: Array,
@@ -24,68 +22,67 @@ defineProps({
 
 const emit = defineEmits(['select-course']);
 
-function onCourseChange(event) {
-  emit('select-course', event.target.value);
+const localCourseId = ref(props.selectedCourseId);
+
+watch(
+  () => props.selectedCourseId,
+  (newVal) => {
+    localCourseId.value = newVal;
+  }
+);
+
+function handleListStudents() {
+  emit('select-course', localCourseId.value);
 }
 </script>
 
 <template>
-  <section class="card">
-    <div class="card-header">
-      <h2 class="card-title">Course Roster — Enrolled Students</h2>
-      <span v-if="selectedCourse" class="badge-muted">
-        {{ rosterStudents.length }} enrolled
-      </span>
-    </div>
+  <section class="section-block">
+    <h1>Students in Course</h1>
 
-    <div class="form-group roster-selector">
-      <label for="rosterCourseSelect">Select a Course to View Roster</label>
+    <div class="form-row">
+      <label for="rosterCourseSelect">Select Course: </label>
       <select
         id="rosterCourseSelect"
-        :value="selectedCourseId"
-        @change="onCourseChange"
+        v-model="localCourseId"
+        @change="handleListStudents"
       >
-        <option value="">-- Select a Course --</option>
+        <option value="">-- Select Course --</option>
         <option
           v-for="course in courses"
           :key="course._id"
           :value="course._id"
         >
-          {{ course.courseId }} — {{ course.courseName }}
+          {{ course.courseName }} ({{ course.courseId }})
         </option>
       </select>
+      <button
+        type="button"
+        class="inline-btn"
+        :disabled="loading"
+        @click="handleListStudents"
+      >
+        List Students
+      </button>
     </div>
 
-    <div v-if="loading" class="empty-state">Loading course roster...</div>
-
-    <div v-else-if="!selectedCourseId" class="empty-state">
-      Select a course above to view all students currently enrolled in it.
-    </div>
-
-    <div v-else-if="rosterStudents.length === 0" class="empty-state">
-      No students are currently enrolled in
-      <strong>{{ selectedCourse?.courseId }} ({{ selectedCourse?.courseName }})</strong>.
-    </div>
-
-    <div v-else class="table-responsive">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Student Name</th>
-            <th>Student ID</th>
-            <th>Phone</th>
-            <th>ZIP Code</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="student in rosterStudents" :key="student._id || student.studentId">
-            <td class="font-medium">{{ student.name }}</td>
-            <td><code>{{ student.studentId }}</code></td>
-            <td>{{ student.phone }}</td>
-            <td>{{ student.zip }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <table border="1" class="classic-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>ID</th>
+          <th>Phone</th>
+          <th>Zip</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="student in rosterStudents" :key="student._id || student.studentId">
+          <td>{{ student.name }}</td>
+          <td>{{ student.studentId }}</td>
+          <td>{{ student.phone }}</td>
+          <td>{{ student.zip }}</td>
+        </tr>
+      </tbody>
+    </table>
   </section>
 </template>
